@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
-import { ImageContext } from "../../../contexts/imageContextProvider";
 import { SelectContext } from "../../../contexts/selectedContextProvider";
-import { CircularProgress, Button } from "@material-ui/core";
-import { DropzoneArea } from "material-ui-dropzone";
+import { ImageContext } from "../../../contexts/imageContextProvider";
+import Button from "@material-ui/core/Button";
+import Webcam from "react-webcam";
+import useStyles from "./useStyleImgCard";
 import { CardMedia, Card, CardHeader } from "@material-ui/core/";
 import { CancelRounded } from "@material-ui/icons";
-import useStyles from "./useStyleImgCard";
+import { CircularProgress } from "@material-ui/core";
 
-function ImgCard({ onHandleChangeImage }) {
+function VdoCard({ webRef, capture }) {
+  const { setShowDrop, showDrop } = useContext(SelectContext);
   const classes = useStyles();
-
   const {
     headBase,
     setHeadBase,
@@ -27,14 +28,7 @@ function ImgCard({ onHandleChangeImage }) {
     setIsLoading,
   } = useContext(ImageContext);
 
-  const { show, setShow, showDrop, setShowDrop } = useContext(SelectContext);
-
-  console.log("detected_objects", detected_objects);
-  console.log("resRawData", resRawData);
-  console.log("respImage", respImage);
-  console.log("preview", previewImage);
   const checkFile = bodyBase || headBase || detected_objects.length;
-  console.log("checkFile", !!checkFile);
 
   const onHandleClearImage = () => {
     setHeadBase(null);
@@ -46,19 +40,25 @@ function ImgCard({ onHandleChangeImage }) {
     setIsLoading(false);
     //setShowDrop(false);
   };
-
-  // console.log("acceptedFiles", acceptedFiles);
+  const onHandleClick = () => {
+    capture();
+  };
   return (
-    <div className={classes.root}>
+    <>
       {!checkFile ? (
-        <div className={classes.dropzone}>
-          <DropzoneArea
-            acceptedFiles={["image/*"]}
-            onChange={onHandleChangeImage}
-            filesLimit={1}
-            showPreviews={false}
-          />
-        </div>
+        <>
+          <p>WebCam detected</p>
+          <Webcam ref={webRef} screenshotFormat="image/jpeg" />
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => onHandleClick()}
+            >
+              Screenshot
+            </Button>
+          </div>
+        </>
       ) : (
         <div>
           <Card className={classes.root}>
@@ -86,8 +86,8 @@ function ImgCard({ onHandleChangeImage }) {
           </Card>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
-export default ImgCard;
+export default VdoCard;

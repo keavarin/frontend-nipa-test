@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import ImageContextProvider from "./contexts/imageContextProvider";
+import SelectContext from "./contexts/selectedContextProvider";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ImageContextProvider>
-      <App />
-    </ImageContextProvider>
+    <SelectContext>
+      <ImageContextProvider>
+        <App />
+      </ImageContextProvider>
+    </SelectContext>
   </React.StrictMode>,
   document.getElementById("root")
 );

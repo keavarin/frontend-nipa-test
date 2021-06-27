@@ -1,40 +1,9 @@
 import React, { useContext, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  Button,
-  Typography,
-  TextareaAutosize,
-  CircularProgress,
-  Box,
-} from "@material-ui/core";
-
+import { Card, CardContent, TextareaAutosize } from "@material-ui/core";
 import { ImageContext } from "../../../contexts/imageContextProvider";
 import DetectObject from "./DetectObject/DetectObject";
+import useStyles from "./useStyleContent";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "5px solid pink",
-    margin: "20px",
-  },
-
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-  card_container: {
-    padding: "10px",
-    backgroundColor: "pink",
-  },
-}));
 function Content() {
   const classes = useStyles();
   const {
@@ -73,7 +42,7 @@ function Content() {
                     <TextareaAutosize
                       disabled
                       rowsMin={10}
-                      style={{ width: "30%", fontSize: "16px" }}
+                      style={{ width: "80%", fontSize: "16px", margin: "2px" }}
                     >
                       {JSON.stringify(i, null, 4)}
                     </TextareaAutosize>

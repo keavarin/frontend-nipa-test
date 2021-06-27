@@ -1,14 +1,18 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useDropzone } from "react-dropzone";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
+
 import nvision from "@nipacloud/nvision/dist/browser/nvision";
-import { getDataBlob } from "../../../../services/convertImg";
 import { ImageContext } from "../../../../contexts/imageContextProvider";
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import { CircularProgress, Button } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
+import { SelectContext } from "../../../../contexts/selectedContextProvider";
 import ImgCard from "../ImgCard";
 import { convertFileToBase64 } from "../../../../services/convertImg";
+import VdoCard from "../VdoCard";
+
 //import DetectObject from "./DetectObject/DetectObject";
 
 const objectDetectionService = nvision.objectDetection({
@@ -34,7 +38,8 @@ function DetectObject() {
     respImage,
     setIsLoading,
   } = useContext(ImageContext);
-
+  const { show, setShow } = useContext(SelectContext);
+  const webRef = useRef(null);
   // const [ headBase, setFiles] = useState([]);
   console.log(" 1headBase", headBase);
   console.log("1PreviewImg", previewImage);
@@ -46,12 +51,6 @@ function DetectObject() {
   const respImg = [headBase, resRawData].join(",");
   setRespImage(respImg);
   console.log("respImg", respImage);
-  // const { getRootProps, getInputProps } = useDropzone({
-  //   accept: "image/*",
-  //   onDrop: (acceptedFiles) => {
-  //     setFiles(acceptedFiles.map((file) => file));
-  //   },
-  // });
 
   async function onHandleChangeImage(files) {
     console.log("files", files[0]);
@@ -70,6 +69,18 @@ function DetectObject() {
       //
     });
   }
+  const capture = useCallback(async () => {
+    const imageSrc = webRef.current.getScreenshot();
+    console.log("imageSrc", imageSrc);
+
+    const newBase = imageSrc.split(",");
+    console.log("newBase", newBase);
+    setBodyBase(newBase[1]);
+    setHeadBase(newBase[0]);
+    console.log("headBase", headBase);
+
+    await detectObject(newBase[1]);
+  }, [webRef]);
 
   async function detectObject(bodyBase64) {
     console.log("bodyBase64", bodyBase64);
@@ -92,15 +103,11 @@ function DetectObject() {
 
   return (
     <>
-      {/* <div {...getRootProps({ className: "dropzone" })}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      </div> */}
-
-      <ImgCard
-        onHandleChangeImage={onHandleChangeImage}
-        // imageSrc={resRawData}
-      />
+      {show ? (
+        <VdoCard webRef={webRef} capture={capture} />
+      ) : (
+        <ImgCard onHandleChangeImage={onHandleChangeImage} />
+      )}
     </>
   );
 }
