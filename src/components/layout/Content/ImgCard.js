@@ -6,8 +6,9 @@ import { DropzoneArea } from "material-ui-dropzone";
 import { CardMedia, Card, CardHeader } from "@material-ui/core/";
 import { CancelRounded } from "@material-ui/icons";
 import useStyles from "./useStyleImgCard";
+import VdoCard from "./VdoCard";
 
-function ImgCard({ onHandleChangeImage }) {
+function ImgCard({ onHandleChangeImage, webRef, capture }) {
   const classes = useStyles();
 
   const {
@@ -27,14 +28,12 @@ function ImgCard({ onHandleChangeImage }) {
     setIsLoading,
   } = useContext(ImageContext);
 
-  const { show, setShow, showDrop, setShowDrop } = useContext(SelectContext);
+  const { show, setShow } = useContext(SelectContext);
 
-  console.log("detected_objects", detected_objects);
-  console.log("resRawData", resRawData);
-  console.log("respImage", respImage);
-  console.log("preview", previewImage);
-  const checkFile = bodyBase || headBase || detected_objects.length;
-  console.log("checkFile", !!checkFile);
+  // console.log("detected_objects", detected_objects);
+  // console.log("resRawData", resRawData);
+  // console.log("respImage", respImage);
+  // console.log("preview", previewImage);
 
   const onHandleClearImage = () => {
     setHeadBase(null);
@@ -50,15 +49,22 @@ function ImgCard({ onHandleChangeImage }) {
   // console.log("acceptedFiles", acceptedFiles);
   return (
     <div className={classes.root}>
-      {!checkFile ? (
-        <div className={classes.dropzone}>
-          <DropzoneArea
-            acceptedFiles={["image/*"]}
-            onChange={onHandleChangeImage}
-            filesLimit={1}
-            showPreviews={false}
-          />
-        </div>
+      {headBase === null ? (
+        show ? (
+          <VdoCard webRef={webRef} capture={capture} />
+        ) : (
+          <>
+            <h2>Upload image detection</h2>
+            <div className={classes.dropzone}>
+              <DropzoneArea
+                acceptedFiles={["image/*"]}
+                onChange={onHandleChangeImage}
+                filesLimit={1}
+                showPreviews={false}
+              />
+            </div>
+          </>
+        )
       ) : (
         <div>
           <Card className={classes.root}>
@@ -80,7 +86,7 @@ function ImgCard({ onHandleChangeImage }) {
               className={classes.imgCard}
               component="img"
               alt="image"
-              src={detected_objects.length ? respImage : previewImage}
+              src={detected_objects?.length ? respImage : previewImage}
               title="image"
             />
           </Card>

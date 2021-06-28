@@ -6,28 +6,21 @@ import useStyles from "./useStyleContent";
 
 function Content() {
   const classes = useStyles();
-  const {
-    headBase,
-    setHeadBase,
-    bodyBase,
-    setBodyBase,
-    detected_objects,
-    setDetected_objects,
-    resRawData,
-    setResRawData,
-    previewImage,
-    setPreviewImage,
-    setRespImage,
-    respImage,
-    isLoading,
-    setIsLoading,
-  } = useContext(ImageContext);
+  const { detected_objects, isLoading } = useContext(ImageContext);
 
   // const [isLoading, setIsLoading] = useState(false);
   console.log("detected_objects", detected_objects);
 
-  const showObject = detected_objects.filter((i) => delete i.cropped_image);
-  console.log("showObject", showObject);
+  let showObject = null;
+  if (detected_objects == undefined) {
+    showObject = [{ message: "cannot detected objects" }];
+    // console.log("showObject", showObject);
+    // console.log("showObject", JSON.stringify(showObject));
+  } else {
+    showObject = detected_objects?.filter((i) => delete i.cropped_image);
+    //   console.log("showObject", showObject);
+    //   console.log("showObject", JSON.stringify(showObject));
+  }
 
   return (
     <div>
@@ -42,7 +35,7 @@ function Content() {
                     <TextareaAutosize
                       disabled
                       rowsMin={10}
-                      style={{ width: "80%", fontSize: "16px", margin: "2px" }}
+                      style={{ width: "100%", fontSize: "16px", margin: "2px" }}
                     >
                       {JSON.stringify(i, null, 4)}
                     </TextareaAutosize>
@@ -50,7 +43,23 @@ function Content() {
                 </CardContent>
               </Card>
             </div>
-          ) : null}
+          ) : (
+            <div>
+              <Card className={classes.root}>
+                <CardContent className={classes.card_container}>
+                  {showObject.map((i) => (
+                    <TextareaAutosize
+                      disabled
+                      rowsMin={10}
+                      style={{ width: "100%", fontSize: "16px", margin: "2px" }}
+                    >
+                      {JSON.stringify(i, null, 4)}
+                    </TextareaAutosize>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </>
       )}
     </div>

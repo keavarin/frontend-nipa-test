@@ -41,16 +41,16 @@ function DetectObject() {
   const { show, setShow } = useContext(SelectContext);
   const webRef = useRef(null);
   // const [ headBase, setFiles] = useState([]);
-  console.log(" 1headBase", headBase);
-  console.log("1PreviewImg", previewImage);
-  console.log("resRawData", resRawData);
+  // console.log(" 1headBase", headBase);
+  // console.log("1PreviewImg", previewImage);
+  // console.log("resRawData", resRawData);
   const previewImg = [headBase, bodyBase].join(",");
   setPreviewImage(previewImg);
 
-  console.log("previewImage", previewImage);
+  // console.log("previewImage", previewImage);
   const respImg = [headBase, resRawData].join(",");
   setRespImage(respImg);
-  console.log("respImg", respImage);
+  // console.log("respImg", respImage);
 
   async function onHandleChangeImage(files) {
     console.log("files", files[0]);
@@ -59,11 +59,11 @@ function DetectObject() {
       const base64 = await convertFileToBase64(file);
       console.log("base64", base64);
 
-      const newBase = base64.split(",");
-      console.log("newBase", newBase[0]);
+      const newBase = base64?.split(",");
+      // console.log("newBase", newBase[0]);
       setBodyBase(newBase[1]);
       setHeadBase(newBase[0]);
-      console.log("headBase", headBase);
+      // console.log("headBase", headBase);
 
       await detectObject(newBase[1]);
       //
@@ -71,19 +71,19 @@ function DetectObject() {
   }
   const capture = useCallback(async () => {
     const imageSrc = webRef.current.getScreenshot();
-    console.log("imageSrc", imageSrc);
+    // console.log("imageSrc", imageSrc);
 
-    const newBase = imageSrc.split(",");
-    console.log("newBase", newBase);
+    const newBase = imageSrc?.split(",");
+    // console.log("newBase", newBase);
     setBodyBase(newBase[1]);
     setHeadBase(newBase[0]);
-    console.log("headBase", headBase);
+    // console.log("headBase", headBase);
 
     await detectObject(newBase[1]);
   }, [webRef]);
 
   async function detectObject(bodyBase64) {
-    console.log("bodyBase64", bodyBase64);
+    // console.log("bodyBase64", bodyBase64);
 
     try {
       const result = await objectDetectionService.predict({
@@ -92,7 +92,7 @@ function DetectObject() {
         outputVisualizedImage: true,
       });
 
-      console.log("result", result);
+      // console.log("result", result);
       setIsLoading(true);
       setDetected_objects(result.detected_objects);
       setResRawData(result.raw_data);
@@ -103,11 +103,11 @@ function DetectObject() {
 
   return (
     <>
-      {show ? (
-        <VdoCard webRef={webRef} capture={capture} />
-      ) : (
-        <ImgCard onHandleChangeImage={onHandleChangeImage} />
-      )}
+      <ImgCard
+        onHandleChangeImage={onHandleChangeImage}
+        webRef={webRef}
+        capture={capture}
+      />
     </>
   );
 }
